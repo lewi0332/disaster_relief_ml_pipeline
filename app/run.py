@@ -68,7 +68,6 @@ def index():
         visible = [False] * len(keywords_df.columns)
         visible[idex] = True
         freq_menu.append({'args': [{'visible': visible}], 'label': elem, 'method': 'restyle'})
-    print(len(freq_menu))
 
     # create visuals
     graphs = [{
