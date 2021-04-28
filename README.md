@@ -15,6 +15,7 @@ Present a disaster relief organization with filtered and important messages to i
 ## Project Components and Installation
 
 **Installation**
+
 Create a virtual environment and install the necessary library packages needed to run project.
 
 On the command line inside the directory:
@@ -28,7 +29,7 @@ python3 -m pip install -r requirements.txt
 
 There are three components as a part of this project.
 
-1. ETL Pipeline: `process_data.py`
+**1. ETL Pipeline:** `process_data.py`
 
 The script takes the file paths of the two `.csv` datasets (messages and categories) and the name of a database to create. The script then cleans the datasets, joins them together, and stores the clean data into a SQLite database in the database file path specified.
 
@@ -38,7 +39,7 @@ Example - Run in command line
 python data/process_data.py data/disaster_messages.csv data/disaster_categories.csv data/DisasterResponse.db
 ```
 
-2. ML Pipeline: `train_classifier.py`
+**2. ML Pipeline:** `train_classifier.py`
 
 This script uses loads data from the SQLite database, splits the dataset into training and test sets and builds a text processing and machine learning pipeline. It then trains and tunes a model on the new data using GridSearchCV to find the best paramaters for that data. The trained mode is then exported as a pickle file to be used in the next step of classifing new messages in the front-end web app. 
 
@@ -49,7 +50,7 @@ python models/train_classifier.py data/DisasterResponse.db models/classifier.pkl
 ```
 
 
-3. Flask Web App
+**3. Flask Web App**
 
 The final piece of this project includes a basic front-end web app in Flask that will highlight some visualizations about the data and provide a text field to enter new messages to be classifed with the model trained in the previous step.
 
