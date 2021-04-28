@@ -1,5 +1,6 @@
 import json
 import plotly
+import re
 import pandas as pd
 
 from nltk.stem import WordNetLemmatizer
@@ -15,6 +16,14 @@ app = Flask(__name__)
 
 
 def tokenize(text):
+    url_regex = 'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
+
+    # get list of all urls using regex
+    detected_urls = re.findall(url_regex, text)
+
+    # replace each url in text string with placeholder
+    for url in detected_urls:
+        text = text.replace(url, 'urlplaceholder')
     tokens = word_tokenize(text)
     lemmatizer = WordNetLemmatizer()
 
@@ -29,6 +38,7 @@ def tokenize(text):
 # load data
 engine = create_engine('sqlite:///data/DisasterResponse.db')
 df = pd.read_sql_table('DisasterResponse', engine)
+keywords_df = pd.read_csv('./data/keywords.csv', index_col=0)
 
 # load model
 model = joblib.load("./models/classifier.pkl")
@@ -40,33 +50,62 @@ model = joblib.load("./models/classifier.pkl")
 def index():
 
     # extract data needed for visuals
-    # TODO: Below is an example - modify to extract data for your own visuals
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
 
+    agg_df = df.loc[(df['related'] == 1) & (df['request'] == 1)].groupby('genre').sum().drop(
+        ['id', 'related', 'request'], axis=1).T.sort_values('direct', ascending=False)
+
+    freq_data = []
+    freq_menu = []
+    for idex, elem in enumerate(keywords_df.columns):
+        temp_x = list(keywords_df.loc[keywords_df[elem] > 0][elem].sort_values(ascending=False).index)
+        temp_y = list(keywords_df.loc[keywords_df[elem] > 0][elem].sort_values(ascending=False))
+        if idex == 0:
+            freq_data.append(Bar(x=temp_x, y=temp_y, visible=True))
+        else:
+            freq_data.append(Bar(x=temp_x, y=temp_y, visible=False))
+        visible = [False] * len(keywords_df.columns)
+        visible[idex] = True
+        freq_menu.append({'args': [{'visible': visible}], 'label': elem, 'method': 'restyle'})
+    print(len(freq_menu))
+
     # create visuals
-    # TODO: Below is an example - modify to create your own visuals
     graphs = [{
-        'data': [Bar(x=genre_names, y=genre_counts)],
+        'data': freq_data,
         'layout': {
-            'title': 'Distribution of Message Genres',
+            'title': 'Frequency of Words in Target Messages',
             'yaxis': {
-                'title': "Count"
+                'title': "Frequency",
+                'tickformat': '%'
             },
             'xaxis': {
-                'title': "Genre"
-            }
+                'title': "Type of Request"
+            },
+            'updatemenus': [{
+                'buttons': freq_menu,
+                'direction': 'down',
+                'pad': {
+                    'r': 10,
+                    't': 10
+                },
+                'showactive': True
+            }]
         }
     }, {
-        'data': [Bar(x=genre_names, y=genre_counts)],
+        'data': [
+            Bar(x=agg_df.index, y=agg_df['direct'], name='Direct Messages'),
+            Bar(x=agg_df.index, y=agg_df['news'], name='News Sources'),
+            Bar(x=agg_df.index, y=agg_df['social'], name='Social Posts')
+        ],
         'layout': {
-            'title': 'Distribution of Message Genres',
+            'title': 'Volume of Request Messages by Source',
             'yaxis': {
                 'title': "Count"
             },
             'xaxis': {
-                'title': "Genre"
-            }
+                'title': "Type of Request"
+            },
         }
     }]
 
