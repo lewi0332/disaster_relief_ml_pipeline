@@ -74,13 +74,13 @@ def index():
     graphs = [{
         'data': freq_data,
         'layout': {
-            'title': 'Frequency of Words in Target Messages',
+            'title': 'Frequency of Words for Each of the Target Message Types',
             'yaxis': {
                 'title': "Frequency",
                 'tickformat': '%'
             },
             'xaxis': {
-                'title': "Type of Request"
+                'title': "Top 20 Words"
             },
             'updatemenus': [{
                 'buttons': freq_menu,
@@ -100,11 +100,15 @@ def index():
         ],
         'layout': {
             'title': 'Volume of Request Messages by Source',
+            'height': 600,
+            'legend': dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=.01),
             'yaxis': {
                 'title': "Count"
             },
             'xaxis': {
-                'title': "Type of Request"
+                'title': "Type of Request",
+                'tickangle': 45,
+                'automargin': True
             },
         }
     }]
