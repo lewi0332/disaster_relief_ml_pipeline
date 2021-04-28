@@ -99,7 +99,7 @@ Sample view of front-end
 
 ## A note on Class Imbalance 
 
-There are thousands of messages are not relavent to the target. Becuase of this we may have difficulties predicting them with standard algorithms. Conventional algorithms are often biased towards the majority class and training rewards simply choosing the dominant class without taking the data distribution into consideration. In the worst case, minority classes are treated as outliers and ignored. For these cases we need to artificially balance the dataset, for example by undersampling or oversampling each class.
+There are thousands of messages that are not relavent to the target. Becuase of this we may have difficulties predicting outcomes with standard algorithms. Conventional algorithms are often biased towards the majority class and training rewards simply choosing the dominant class without taking the data distribution into consideration. In the worst case, minority classes are treated as outliers and ignored. For these cases we need to artificially balance the dataset, for example by undersampling or oversampling each class.
 
 In this case of imbalanced data, each class is trained individually and the majority class is needed to predict true neagtives. It is desirable to have a classifier that gives high prediction accuracy over the majority class, while maintaining reasonable accuracy for the minority classes. 
 
