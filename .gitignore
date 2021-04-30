@@ -128,3 +128,7 @@ dmypy.json
 # Pyre type checker
 .pyre/
 .vscode/settings.json
+data/DisasterResponse.db
+data/keywords.csv
+.gitignore
+models/classifier.pkl
